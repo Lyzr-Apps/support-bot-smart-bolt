@@ -1,0 +1,35 @@
+{
+  "workflow_created": true,
+  "agents_created": [
+    {
+      "agent_name": "Customer Support Agent",
+      "agent_id": "696608c9c831c63e265e1355",
+      "agent_type": "Single",
+      "has_knowledge_base": true,
+      "rag_id": "696608baee18986913061ae0",
+      "rag_name": "customersupportknowledgebaseru1x",
+      "provider": "OpenAI",
+      "model": "gpt-4.1",
+      "temperature": 0.3,
+      "top_p": 1,
+      "response_schema_saved": true,
+      "schema_file": "response_schemas/customer_support_agent_response.json"
+    }
+  ],
+  "total_agents": 1,
+  "workflow_type": "single_agent_with_kb",
+  "knowledge_bases": [
+    {
+      "name": "Customer Support Knowledge Base",
+      "rag_id": "696608baee18986913061ae0",
+      "collection_name": "customersupportknowledgebaseru1x",
+      "description": "Vector database containing indexed website content for accurate customer support responses",
+      "status": "ready_for_crawl"
+    }
+  ],
+  "next_steps": [
+    "User needs to provide website URL to crawl and index into knowledge base",
+    "Use crawl_website tool with the user's URL and rag_id: 696608baee18986913061ae0",
+    "After crawling, the agent will be ready to answer customer queries based on website content"
+  ]
+}

@@ -1,0 +1,61 @@
+{
+  "agent_name": "Customer Support Agent",
+  "agent_id": "696608c9c831c63e265e1355",
+  "agent_purpose": "research",
+  "description": "Q&A chatbot that searches knowledge base to provide accurate customer support responses with sources and confidence scores",
+  "response_schema": {
+    "status": "string",
+    "result": {
+      "answer": "string",
+      "sources": [
+        "any"
+      ],
+      "confidence": "number",
+      "suggested_followup": [
+        "string"
+      ]
+    },
+    "metadata": {
+      "agent_name": "string",
+      "timestamp": "string"
+    }
+  },
+  "example_response": {
+    "status": "error",
+    "result": {
+      "answer": "I'm sorry, but I couldn't find information regarding our business hours in the knowledge base. If you have any other questions or need further assistance, please let me know!",
+      "sources": [],
+      "confidence": 0.0,
+      "suggested_followup": [
+        "What services do you offer?",
+        "How can I contact customer support?",
+        "Where are you located?"
+      ]
+    },
+    "metadata": {
+      "agent_name": "Customer Support Agent",
+      "timestamp": "2024-06-11T21:31:45Z"
+    }
+  },
+  "is_actual_tested": true,
+  "test_timestamp": "2026-01-13T08:57:42.352057",
+  "test_message_used": "Research a sample topic for testing",
+  "actual_test_response": {
+    "status": "error",
+    "result": {
+      "answer": "I'm sorry, but I couldn't find information regarding our business hours in the knowledge base. If you have any other questions or need further assistance, please let me know!",
+      "sources": [],
+      "confidence": 0.0,
+      "suggested_followup": [
+        "What services do you offer?",
+        "How can I contact customer support?",
+        "Where are you located?"
+      ]
+    },
+    "metadata": {
+      "agent_name": "Customer Support Agent",
+      "timestamp": "2024-06-11T21:31:45Z"
+    }
+  },
+  "test_passed": true
+}

@@ -1,0 +1,59 @@
+{
+  "nodes": [
+    {
+      "id": "user_input",
+      "type": "Input",
+      "label": "Customer Query",
+      "nodeCategory": "input",
+      "position": {
+        "x": 100,
+        "y": 200
+      }
+    },
+    {
+      "id": "support_agent",
+      "type": "Agent",
+      "label": "Customer Support Agent",
+      "nodeCategory": "agent",
+      "agentId": "696608c9c831c63e265e1355",
+      "agentName": "Customer Support Agent",
+      "hasKnowledgeBase": true,
+      "ragId": "696608baee18986913061ae0",
+      "position": {
+        "x": 400,
+        "y": 200
+      }
+    },
+    {
+      "id": "response_output",
+      "type": "Output",
+      "label": "Support Response",
+      "nodeCategory": "end",
+      "position": {
+        "x": 700,
+        "y": 200
+      }
+    }
+  ],
+  "edges": [
+    {
+      "source": "user_input",
+      "target": "support_agent",
+      "id": "edge-user_input-support_agent"
+    },
+    {
+      "source": "support_agent",
+      "target": "response_output",
+      "id": "edge-support_agent-response_output"
+    }
+  ],
+  "workflowType": "single_agent_with_kb",
+  "totalAgents": 1,
+  "knowledgeBases": [
+    {
+      "ragId": "696608baee18986913061ae0",
+      "ragName": "customersupportknowledgebaseru1x",
+      "name": "Customer Support Knowledge Base"
+    }
+  ]
+}

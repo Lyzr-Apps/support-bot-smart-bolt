@@ -1,0 +1,27 @@
+{
+  "agent_name": "Customer Support Agent",
+  "agent_id": "696608c9c831c63e265e1355",
+  "test_message": "What are your business hours?",
+  "expected_purpose": "assistant",
+  "timestamp": "2026-01-13T08:57:42.351339",
+  "is_valid_json": true,
+  "validation_errors": [],
+  "actual_response": {
+    "status": "error",
+    "result": {
+      "answer": "I'm sorry, but I couldn't find information regarding our business hours in the knowledge base. If you have any other questions or need further assistance, please let me know!",
+      "sources": [],
+      "confidence": 0.0,
+      "suggested_followup": [
+        "What services do you offer?",
+        "How can I contact customer support?",
+        "Where are you located?"
+      ]
+    },
+    "metadata": {
+      "agent_name": "Customer Support Agent",
+      "timestamp": "2024-06-11T21:31:45Z"
+    }
+  },
+  "raw_response": "{\n  \"status\": \"error\",\n  \"result\": {\n    \"answer\": \"I'm sorry, but I couldn't find information regarding our business hours in the knowledge base. If you have any other questions or need further assistance, please let me know!\",\n    \"sources\": [],\n    \"confidence\": 0.0,\n    \"suggested_followup\": [\"What services do you offer?\", \"How can I contact customer support?\", \"Where are you located?\"]\n  },\n  \"metadata\": {\n    \"agent_name\": \"Customer Support Agent\",\n    \"timestamp\": \"2024-06-11T21:31:45Z\"\n  }\n}"
+}
