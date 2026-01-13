@@ -109,11 +109,30 @@ function MessageBubble({ message }: { message: Message }) {
             <div className="mt-2 pt-2 border-t border-blue-400/30">
               <p className="text-xs text-blue-100 mb-1">Sources:</p>
               <div className="space-y-1">
-                {message.sources.map((source, idx) => (
-                  <p key={idx} className="text-xs text-blue-50">
-                    {typeof source === 'string' ? source : JSON.stringify(source)}
-                  </p>
-                ))}
+                {message.sources.map((source, idx) => {
+                  const sourceText = typeof source === 'string' ? source : JSON.stringify(source)
+                  const urlMatch = sourceText.match(/https?:\/\/[^\s]+/)
+
+                  if (urlMatch) {
+                    return (
+                      <a
+                        key={idx}
+                        href={urlMatch[0]}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-xs text-blue-50 hover:text-white underline block"
+                      >
+                        {sourceText}
+                      </a>
+                    )
+                  }
+
+                  return (
+                    <p key={idx} className="text-xs text-blue-50">
+                      {sourceText}
+                    </p>
+                  )
+                })}
               </div>
             </div>
           )}
