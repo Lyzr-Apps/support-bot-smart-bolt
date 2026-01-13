@@ -12,7 +12,8 @@ import {
   Search,
   MessageCircle,
   ChevronLeft,
-  ChevronRight
+  ChevronRight,
+  Lightbulb
 } from 'lucide-react'
 import { callAIAgent } from '@/utils/aiAgent'
 import type { NormalizedAgentResponse } from '@/utils/aiAgent'
@@ -61,11 +62,11 @@ const QUICK_REPLIES = ['Pricing', 'How to get started', 'Return policy', 'Contac
 // Typing indicator component
 function TypingIndicator() {
   return (
-    <div className="flex items-center space-x-2 px-4 py-3 bg-blue-50 rounded-2xl rounded-bl-sm max-w-[80px]">
+    <div className="flex items-center space-x-2 px-4 py-3 backdrop-blur-xl bg-gradient-to-br from-blue-500/60 to-purple-600/60 border border-white/30 rounded-2xl rounded-bl-sm max-w-[80px] shadow-lg">
       <div className="flex space-x-1">
-        <div className="w-2 h-2 bg-blue-400 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></div>
-        <div className="w-2 h-2 bg-blue-400 rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></div>
-        <div className="w-2 h-2 bg-blue-400 rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></div>
+        <div className="w-2 h-2 bg-white rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></div>
+        <div className="w-2 h-2 bg-white rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></div>
+        <div className="w-2 h-2 bg-white rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></div>
       </div>
     </div>
   )
@@ -84,20 +85,21 @@ function MessageBubble({ message }: { message: Message }) {
     <div className={`flex ${isAgent ? 'justify-start' : 'justify-end'} mb-4 animate-in slide-in-from-bottom-2 duration-300`}>
       <div className={`flex flex-col ${isAgent ? 'items-start' : 'items-end'} max-w-[75%]`}>
         <div
-          className={`px-4 py-3 rounded-2xl ${
+          className={`px-4 py-3 rounded-2xl backdrop-blur-xl border shadow-lg ${
             isAgent
-              ? 'bg-gradient-to-br from-blue-500 to-blue-600 text-white rounded-bl-sm'
-              : 'bg-gray-100 text-gray-900 rounded-br-sm'
+              ? 'bg-gradient-to-br from-blue-500/80 to-purple-600/80 text-white border-white/30 rounded-bl-sm'
+              : 'bg-white/20 text-white border-white/30 rounded-br-sm'
           }`}
+          style={{ boxShadow: isAgent ? '0 8px 32px 0 rgba(59, 130, 246, 0.37)' : '0 8px 32px 0 rgba(255, 255, 255, 0.15)' }}
         >
           <p className="text-sm whitespace-pre-wrap break-words">{message.content}</p>
 
           {/* Confidence score for agent messages */}
           {isAgent && message.confidence !== undefined && message.confidence > 0 && (
-            <div className="mt-2 pt-2 border-t border-blue-400/30">
+            <div className="mt-2 pt-2 border-t border-white/20">
               <div className="flex items-center space-x-2">
-                <span className="text-xs text-blue-100">Confidence:</span>
-                <Badge variant="secondary" className="bg-blue-400/20 text-blue-50 text-xs">
+                <span className="text-xs text-white/80">Confidence:</span>
+                <Badge variant="secondary" className="backdrop-blur-md bg-white/20 text-white text-xs border border-white/30">
                   {(message.confidence * 100).toFixed(0)}%
                 </Badge>
               </div>
@@ -106,8 +108,8 @@ function MessageBubble({ message }: { message: Message }) {
 
           {/* Sources */}
           {isAgent && message.sources && message.sources.length > 0 && (
-            <div className="mt-2 pt-2 border-t border-blue-400/30">
-              <p className="text-xs text-blue-100 mb-1">Sources:</p>
+            <div className="mt-2 pt-2 border-t border-white/20">
+              <p className="text-xs text-white/80 mb-1">Sources:</p>
               <div className="space-y-1">
                 {message.sources.map((source, idx) => {
                   const sourceText = typeof source === 'string' ? source : JSON.stringify(source)
@@ -120,7 +122,7 @@ function MessageBubble({ message }: { message: Message }) {
                         href={urlMatch[0]}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-xs text-blue-50 hover:text-white underline block"
+                        className="text-xs text-white/90 hover:text-white underline block transition-colors"
                       >
                         {sourceText}
                       </a>
@@ -128,7 +130,7 @@ function MessageBubble({ message }: { message: Message }) {
                   }
 
                   return (
-                    <p key={idx} className="text-xs text-blue-50">
+                    <p key={idx} className="text-xs text-white/80">
                       {sourceText}
                     </p>
                   )
@@ -138,7 +140,7 @@ function MessageBubble({ message }: { message: Message }) {
           )}
         </div>
 
-        <span className={`text-xs text-gray-500 mt-1 ${isAgent ? 'ml-1' : 'mr-1'}`}>
+        <span className={`text-xs text-white/50 mt-1 ${isAgent ? 'ml-1' : 'mr-1'}`}>
           {timeStr}
         </span>
 
@@ -148,7 +150,7 @@ function MessageBubble({ message }: { message: Message }) {
             {message.suggested_followup.map((question, idx) => (
               <button
                 key={idx}
-                className="text-xs px-3 py-1.5 bg-white border border-blue-200 text-blue-600 rounded-full hover:bg-blue-50 transition-colors"
+                className="text-xs px-3 py-1.5 backdrop-blur-md bg-white/10 border border-white/30 text-white rounded-full hover:bg-white/20 transition-all duration-200"
                 onClick={() => {
                   const event = new CustomEvent('send-suggested-question', { detail: question })
                   window.dispatchEvent(event)
@@ -182,17 +184,19 @@ function ConversationItem({
   return (
     <button
       onClick={onClick}
-      className={`w-full text-left p-3 rounded-lg transition-colors ${
-        isActive ? 'bg-blue-50 border border-blue-200' : 'hover:bg-gray-50'
+      className={`w-full text-left p-3 rounded-lg transition-all duration-200 ${
+        isActive
+          ? 'backdrop-blur-md bg-white/20 border border-white/40 shadow-lg'
+          : 'backdrop-blur-md bg-white/5 hover:bg-white/10 border border-white/10'
       }`}
     >
       <div className="flex items-start justify-between mb-1">
-        <h4 className="text-sm font-medium text-gray-900 truncate flex-1">
+        <h4 className="text-sm font-medium text-white truncate flex-1">
           {conversation.title}
         </h4>
-        <span className="text-xs text-gray-500 ml-2">{dateStr}</span>
+        <span className="text-xs text-white/60 ml-2">{dateStr}</span>
       </div>
-      <p className="text-xs text-gray-600 truncate">{conversation.preview}</p>
+      <p className="text-xs text-white/70 truncate">{conversation.preview}</p>
     </button>
   )
 }
@@ -204,6 +208,8 @@ export default function Home() {
   const [isTyping, setIsTyping] = useState(false)
   const [isSidebarOpen, setIsSidebarOpen] = useState(true)
   const [searchQuery, setSearchQuery] = useState('')
+  const [showFeatureRequest, setShowFeatureRequest] = useState(false)
+  const [featureRequestText, setFeatureRequestText] = useState('')
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLTextAreaElement>(null)
 
@@ -383,6 +389,17 @@ export default function Home() {
     setActiveConversationId(newConv.id)
   }
 
+  function handleFeatureRequest() {
+    if (!featureRequestText.trim()) return
+
+    // Here you could send the feature request to an API
+    console.log('Feature request submitted:', featureRequestText)
+
+    // Reset and close
+    setFeatureRequestText('')
+    setShowFeatureRequest(false)
+  }
+
   // Filter conversations by search query
   const filteredConversations = conversations.filter(conv =>
     conv.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -390,33 +407,43 @@ export default function Home() {
   )
 
   return (
-    <div className="flex h-screen bg-gradient-to-br from-gray-50 to-blue-50/30">
+    <div className="flex h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 relative overflow-hidden">
+      {/* Glassmorphism background effects */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute top-0 left-1/4 w-96 h-96 bg-blue-500/20 rounded-full blur-3xl animate-pulse"></div>
+        <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-purple-500/20 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }}></div>
+        <div className="absolute top-1/2 left-1/2 w-96 h-96 bg-cyan-500/20 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '2s' }}></div>
+      </div>
+
       {/* Sidebar - Desktop */}
       <div
         className={`${
           isSidebarOpen ? 'w-80' : 'w-0'
-        } transition-all duration-300 border-r border-gray-200 bg-white flex flex-col overflow-hidden`}
+        } transition-all duration-300 backdrop-blur-xl bg-white/10 border-r border-white/20 flex flex-col overflow-hidden relative z-10`}
+        style={{
+          boxShadow: 'inset 0 1px 0 0 rgba(255, 255, 255, 0.1)',
+        }}
       >
-        <div className="p-4 border-b border-gray-200">
+        <div className="p-4 border-b border-white/10">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-lg font-semibold text-gray-900">Conversations</h2>
+            <h2 className="text-lg font-semibold text-white">Conversations</h2>
             <Button
               onClick={handleNewConversation}
               size="sm"
-              className="bg-blue-600 hover:bg-blue-700 text-white"
+              className="backdrop-blur-md bg-white/20 hover:bg-white/30 text-white border border-white/30 transition-all duration-200"
             >
               New Chat
             </Button>
           </div>
 
           <div className="relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-white/60" />
             <Input
               type="text"
               placeholder="Search conversations..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-9 bg-gray-50 border-gray-200"
+              className="pl-9 backdrop-blur-md bg-white/10 border-white/20 text-white placeholder:text-white/50 focus:bg-white/20 transition-all"
             />
           </div>
         </div>
@@ -432,48 +459,59 @@ export default function Home() {
               />
             ))}
             {filteredConversations.length === 0 && (
-              <p className="text-sm text-gray-500 text-center py-8">
+              <p className="text-sm text-white/60 text-center py-8">
                 No conversations found
               </p>
             )}
           </div>
         </ScrollArea>
+
+        {/* Feature Request Button */}
+        <div className="p-4 border-t border-white/10">
+          <Button
+            onClick={() => setShowFeatureRequest(true)}
+            className="w-full backdrop-blur-md bg-gradient-to-r from-purple-500/20 to-blue-500/20 hover:from-purple-500/30 hover:to-blue-500/30 text-white border border-white/30 transition-all duration-200"
+          >
+            <Lightbulb className="h-4 w-4 mr-2" />
+            Feature Request
+          </Button>
+        </div>
       </div>
 
       {/* Main Chat Area */}
-      <div className="flex-1 flex flex-col">
+      <div className="flex-1 flex flex-col relative z-10">
         {/* Header */}
-        <div className="bg-white border-b border-gray-200 px-6 py-4">
+        <div className="backdrop-blur-xl bg-white/10 border-b border-white/20 px-6 py-4" style={{ boxShadow: 'inset 0 1px 0 0 rgba(255, 255, 255, 0.1)' }}>
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-4">
               <Button
                 variant="ghost"
                 size="sm"
                 onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-                className="text-gray-600 hover:text-gray-900"
+                className="text-white/80 hover:text-white hover:bg-white/10"
               >
                 {isSidebarOpen ? <ChevronLeft className="h-5 w-5" /> : <ChevronRight className="h-5 w-5" />}
               </Button>
 
               <div className="flex items-center space-x-3">
-                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center">
+                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-400 to-purple-500 flex items-center justify-center backdrop-blur-md shadow-lg">
                   <MessageCircle className="h-5 w-5 text-white" />
                 </div>
                 <div>
-                  <h1 className="text-lg font-semibold text-gray-900">Support Chat</h1>
+                  <h1 className="text-lg font-semibold text-white">Support Chat</h1>
                   <div className="flex items-center space-x-2">
-                    <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                    <span className="text-xs text-gray-600">Online</span>
+                    <div className="w-2 h-2 bg-green-400 rounded-full shadow-lg shadow-green-400/50"></div>
+                    <span className="text-xs text-white/70">Online</span>
                   </div>
                 </div>
               </div>
             </div>
 
             <div className="flex items-center space-x-2">
-              <Button variant="ghost" size="sm" className="text-gray-600 hover:text-gray-900">
+              <Button variant="ghost" size="sm" className="text-white/80 hover:text-white hover:bg-white/10">
                 <Minimize2 className="h-4 w-4" />
               </Button>
-              <Button variant="ghost" size="sm" className="text-gray-600 hover:text-gray-900">
+              <Button variant="ghost" size="sm" className="text-white/80 hover:text-white hover:bg-white/10">
                 <X className="h-4 w-4" />
               </Button>
             </div>
@@ -500,7 +538,7 @@ export default function Home() {
                   <button
                     key={reply}
                     onClick={() => handleSendMessage(reply)}
-                    className="px-4 py-2 bg-white border border-gray-200 text-gray-700 rounded-full text-sm hover:border-blue-300 hover:bg-blue-50 transition-colors"
+                    className="px-4 py-2 backdrop-blur-md bg-white/10 border border-white/30 text-white rounded-full text-sm hover:bg-white/20 transition-all duration-200 shadow-lg"
                   >
                     {reply}
                   </button>
@@ -513,9 +551,9 @@ export default function Home() {
         </ScrollArea>
 
         {/* Input Area */}
-        <div className="bg-white border-t border-gray-200 px-6 py-4">
+        <div className="backdrop-blur-xl bg-white/10 border-t border-white/20 px-6 py-4" style={{ boxShadow: 'inset 0 1px 0 0 rgba(255, 255, 255, 0.1)' }}>
           <div className="max-w-4xl mx-auto">
-            <Card className="shadow-sm">
+            <Card className="backdrop-blur-xl bg-white/10 border-white/30 shadow-2xl">
               <CardContent className="p-3">
                 <div className="flex items-end space-x-2">
                   <textarea
@@ -529,23 +567,23 @@ export default function Home() {
                     onKeyDown={handleKeyDown}
                     placeholder="Type your question..."
                     rows={1}
-                    className="flex-1 resize-none border-0 focus:outline-none focus:ring-0 bg-transparent text-sm placeholder:text-gray-400 max-h-32 overflow-y-auto"
+                    className="flex-1 resize-none border-0 focus:outline-none focus:ring-0 bg-transparent text-sm placeholder:text-white/50 text-white max-h-32 overflow-y-auto"
                     style={{ minHeight: '24px' }}
                   />
                   <Button
                     onClick={() => handleSendMessage()}
                     disabled={!inputValue.trim() || isTyping}
                     size="sm"
-                    className="bg-blue-600 hover:bg-blue-700 text-white disabled:bg-gray-300 disabled:cursor-not-allowed"
+                    className="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white disabled:opacity-50 disabled:cursor-not-allowed shadow-lg"
                   >
                     <Send className="h-4 w-4" />
                   </Button>
                 </div>
                 <div className="flex items-center justify-between mt-2">
-                  <span className="text-xs text-gray-500">
+                  <span className="text-xs text-white/60">
                     Press Enter to send, Shift+Enter for new line
                   </span>
-                  <span className={`text-xs ${inputValue.length > 450 ? 'text-red-500' : 'text-gray-400'}`}>
+                  <span className={`text-xs ${inputValue.length > 450 ? 'text-red-400' : 'text-white/50'}`}>
                     {inputValue.length}/500
                   </span>
                 </div>
@@ -554,6 +592,61 @@ export default function Home() {
           </div>
         </div>
       </div>
+
+      {/* Feature Request Modal */}
+      {showFeatureRequest && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 backdrop-blur-sm bg-black/50">
+          <div className="relative w-full max-w-md">
+            <Card className="backdrop-blur-2xl bg-white/10 border-white/30 shadow-2xl">
+              <CardContent className="p-6">
+                <div className="flex items-center justify-between mb-4">
+                  <h2 className="text-xl font-semibold text-white flex items-center gap-2">
+                    <Lightbulb className="h-5 w-5 text-yellow-400" />
+                    Feature Request
+                  </h2>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setShowFeatureRequest(false)}
+                    className="text-white/80 hover:text-white hover:bg-white/10"
+                  >
+                    <X className="h-4 w-4" />
+                  </Button>
+                </div>
+
+                <p className="text-sm text-white/70 mb-4">
+                  Share your ideas to help us improve the experience!
+                </p>
+
+                <textarea
+                  value={featureRequestText}
+                  onChange={(e) => setFeatureRequestText(e.target.value)}
+                  placeholder="Describe your feature request..."
+                  rows={6}
+                  className="w-full px-4 py-3 backdrop-blur-md bg-white/10 border border-white/20 rounded-lg text-white placeholder:text-white/50 focus:outline-none focus:ring-2 focus:ring-blue-400/50 resize-none"
+                />
+
+                <div className="flex gap-2 mt-4">
+                  <Button
+                    onClick={() => setShowFeatureRequest(false)}
+                    variant="outline"
+                    className="flex-1 backdrop-blur-md bg-white/10 hover:bg-white/20 text-white border-white/30"
+                  >
+                    Cancel
+                  </Button>
+                  <Button
+                    onClick={handleFeatureRequest}
+                    disabled={!featureRequestText.trim()}
+                    className="flex-1 bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white disabled:opacity-50 shadow-lg"
+                  >
+                    Submit
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
