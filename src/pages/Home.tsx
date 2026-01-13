@@ -144,23 +144,6 @@ function MessageBubble({ message }: { message: Message }) {
           {timeStr}
         </span>
 
-        {/* Suggested follow-up questions */}
-        {isAgent && message.suggested_followup && message.suggested_followup.length > 0 && (
-          <div className="mt-2 flex flex-wrap gap-2">
-            {message.suggested_followup.map((question, idx) => (
-              <button
-                key={idx}
-                className="text-xs px-3 py-1.5 backdrop-blur-md bg-white/10 border border-white/30 text-white rounded-full hover:bg-white/20 transition-all duration-200"
-                onClick={() => {
-                  const event = new CustomEvent('send-suggested-question', { detail: question })
-                  window.dispatchEvent(event)
-                }}
-              >
-                {question}
-              </button>
-            ))}
-          </div>
-        )}
       </div>
     </div>
   )
